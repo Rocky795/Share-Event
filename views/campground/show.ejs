@@ -1,0 +1,100 @@
+<% layout('/layouts/boilerplate') %>
+
+<div class="container">
+  <div class="col">
+    <div class="card">
+      <!-- <img
+        class="card-img-top"
+        src="<%= campground.images %>"
+        alt="Card image cap"
+      /> -->
+      <div class="card-body">
+        <h5 class="card-title"><%= campground.title %></h5>
+        <p class="card-text"><%= campground.discription %></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-muted"><%= campground.location %></li>
+
+        <li class="list-group-item">
+          Submitted by <strong><%= campground.author.username %></strong>
+        </li>
+
+        <li class="list-group-item"><%= campground.price %></li>
+      </ul>
+      <div class="card-body">
+        <% if(currentUser && campground.author.equals(currentUser)){ %>
+        <a
+          href="/campground/<%= campground._id %>/edit"
+          class="card-link btn btn-info"
+          >Card Edit</a
+        >
+        <form
+          action="/campground/<%= campground._id %>?_method=DELETE"
+          method="post"
+          class="d-inline"
+        >
+          <button class="card-link btn m-3 btn-danger">Delete</button>
+        </form>
+        <% } %>
+        <a href="/campground" class="btn m-3 btn-primary">All Campground</a>
+      </div>
+
+      <div class="card-footer text-muted">3 days ago</div>
+    </div>
+  </div>
+  <div class="col">
+    <% if(currentUser){ %>
+    <h2>Leave a Review</h2>
+    <form
+      action="/campground/<%= campground._id %>/reviews"
+      method="post"
+      class="validated-form"
+      novalidate
+    >
+      <div class="m-3">
+        <label for="rating" class="form-label">Rating</label>
+        <input
+          type="range"
+          name="review[rating]"
+          id="rating"
+          class="form-range"
+          min="1"
+          max="5"
+        />
+      </div>
+      <div class="m-3">
+        <label for="body" class="form-label">Review</label>
+        <textarea
+          name="review[body]"
+          id="body"
+          class="form-control"
+          cols="30"
+          rows="3"
+          required
+        ></textarea>
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+      <button class="btn btn-success m-3">Submit</button>
+    </form>
+    <% } %> <% for(let review of campground.reviews){ %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%= review.rating %></h5>
+        <h6 class="card-subtitle text-muted mb-2">
+          By <%= review.author.username %>
+        </h6>
+        <p class="card-text">Review: <%= review.body %></p>
+        <% if(currentUser && review.author.equals(currentUser)){ %>
+        <form
+          action="/campground/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+          method="post"
+        >
+          <button class="btn m-1 btn-danger">Delete</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+
+    <% } %>
+  </div>
+</div>
